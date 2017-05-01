@@ -1,0 +1,298 @@
+<html>
+<head>
+	<title>Factorial Calculating</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="style.css" />
+	<script src="vue.js"></script>
+	<script src="vuex.js"></script>
+</head>
+<body>
+
+<div id="app">
+	<div id="maincontainer">
+		<div id="menubar">Factorial - Calculating of factorial function() of numbers.     By: N.A.Danilov, 2017 (С) </div>
+		<div id="desktop"></div>
+	</div><!-- end maincontainer -->
+
+	<!-- Modal windows - outside of desktop elements to exclude the effect of CSS3-filters which applied to Desktop surface -->
+	<inputwindow v-if="toggleInputWindow" id="inputwindow" title="Data input"
+			 internalheader="Please, input integer number:" divline="on" class="inputtext" style="width: 450px;"></inputwindow>
+	
+	<basewindow v-if="toggleOutputWindow" id="outputwindow" title="Calculating results"
+			v-bind:internalheader="sourceData" divline="on" v-bind:text="calculatedResult" class="textInfo" style="width: 550px;"></basewindow>
+			
+	<basewindow v-if="toggleMSDOSWindow" id="msdos" title="Error" text="Couldn't start MS-DOS Shell of 1996 year version in 2017 year - because of in the same river can not enter twice." class="textDanger" style="width: 450px;"></basewindow>
+			
+	<basewindow v-if="toggleHelpWindow" id="helpWindow" title="Help"
+			
+				internalheader="Short help for this SPA web-application"
+			
+				divline="on"
+			
+				text='Instructions
+1) Press Alt + {2}
+2) Enter a number and press Enter.
+3) Enjoy the result!
+4) If necessary, close the window with the Esc key
+'
+		
+		class="textInfo" style="width: 550px;">
+</basewindow>
+	
+	<footer>
+	<div id="fnkeysblock">
+		<template v-if="!this.$store.state.isModalOpen">
+			<fnkb-el fnkey="1" title="Help" v-on:fnkeyclick="helpWindow()"></fnkb-el>
+			<fnkb-el fnkey="2" title="Input num" v-on:fnkeyclick="inputWindow()"></fnkb-el>
+			<fnkb-el fnkey="3" title="Desk color" v-on:fnkeyclick="rotateDesktopColor()"></fnkb-el>
+			<fnkb-el fnkey="4" title="Menu color" v-on:fnkeyclick="rotateMenuColor()"></fnkb-el>
+			<fnkb-el fnkey="5" title="Reset color" v-on:fnkeyclick="resetColors()"></fnkb-el>
+			<fnkb-el fnkey="6" title="MS-DOS" v-on:fnkeyclick="startMSDOS()"></fnkb-el>
+			<fnkb-el fnkey="9" title="Setup"></fnkb-el>
+		</template>
+		<template v-else>
+			<fnkb-el fnkey="ESC" title="Close window" v-on:fnkeyclick="closeAnyModalWindow()"></fnkb-el>
+			<fnkb-el v-if="this.$store.state.isEnterEnabled" fnkey="Enter" title="Input data!" v-on:fnkeyclick="dataInput()"></fnkb-el>
+		</template>
+	</div>
+		
+	</footer>
+</div>
+
+<script>
+/* My own Vue-directives!
+ * Here, we register global custom directive v-focus
+ * This directive do "input line element" are focused and active, with blinked "cursor"
+*/
+Vue.directive('focus', {
+  // When needed element inserted in DOM...
+  inserted: function (el) {
+    // Switch "focus" to element
+    el.focus();
+  }
+});
+
+
+/* "Hot key" element for creating "Hot Keys" and "Hint line" at the bottom part of Application  */
+Vue.component('fnkb-el', {
+	props: ['fnkey', 'title'],
+	template: '<div id="fnkb-el" :style="activeBK" v-on:click="clickEvent"> {{ getALTHint + fnkey }}&nbsp;<div :style="activeBK" class="fnkb-title">{{ title }}</div> </div>',
+	
+	created: function() { window.addEventListener('keyup', this.fnkeyup); },
+	beforeDestroy: function() { window.removeEventListener('keyup', this.fnkeyup); },
+	
+	data: function() { return {
+		activeBK: "",
+		
+		};
+	},
+	
+	computed: {
+		getFNkey: function() { return +this.fnkey; //"+" is conversion "String" to "Number"
+		},
+		keyTable: function() { return [48,49,50,51,52,53,54,55,56,57]; }, //Alt-codes for {0}- {9} keys
+		getALTHint: function() { 
+			var hint = "ALT+";
+			if (this.fnkey == "ESC") { hint=""; }
+			if (this.fnkey == "Enter") { hint=""; }
+			return hint;
+		}
+	},
+	
+	methods: {
+		fnkeyup: function(e) {
+			if ((e.keyCode == this.keyTable[this.getFNkey]) && e.altKey) {
+				e.stopImmediatePropagation();
+				this.clickEvent();
+			}
+			
+			if ((this.fnkey == "Enter") && (e.keyCode == 13)) {
+				e.stopImmediatePropagation();
+				this.clickEvent();
+			}
+		}, //end fnkeyup()
+		
+		clickEvent: function() {		
+			var self = this; //Save link to "this" object, as inside setTimeout() "this" not be right object!
+            
+			setTimeout(function(){
+				self.activeBK = "background-color: green;"; // Coloring in dark-green the background of element
+			}, 200); //...for 200 ms
+			setTimeout(function(){
+                self.activeBK = ""; // Return the background of the element to source color
+				self.$emit('fnkeyclick'); //Fire the event
+            }, 500);
+		}
+	}
+});
+
+
+
+Vue.component('basewindow', {
+	props: ['title', 'divline', 'internalheader', 'text', 'bkcolor', 'forecolor'],
+	
+	template: '<div style="padding: 25px;"> <div style="border: double 5px; padding: 25px;"> <div class="bwtitle">{{ title }}</div> <span style="color:cyan;">{{ internalheader }}</span> <br/> <div style="color:magenta; display:inline;">{{ getDivider() }}</div> <br/> {{ text }}</p> </div> </div>',
+	
+	created: function() { window.addEventListener('keydown', this.keyHandler); },
+	beforeDestroy: function() { window.removeEventListener('keydown', this.keyHandler); },
+	
+	methods: {
+		keyHandler: function(e) {
+			//Self-closing property))) Now, very crooked of course...
+			if (e.keyCode == 27) { vm1.closeAnyModalWindow(); }
+			//TODO: link to any owner object, like it was in "Turbo Vision" OOP Environment 20 years ago
+		},
+		getDivider: function() {
+			var sym = "─", divider="";
+			var inthead = this.internalheader;
+			
+			if (!this.divline) { return null; }
+			
+			if (!inthead) { return ""; } //Test on initializing of this object - not null on the second pass.. but why?
+			for (var i=0; i <= inthead.length; i++) {	divider += sym; }
+	
+			return divider;
+		}
+	}//end methods
+});
+
+
+Vue.component('inputwindow', {
+	props: ['title', 'divline', 'internalheader', 'bkcolor', 'forecolor'],
+	
+	template: '<div style="padding: 25px;"> <div style="border: double 5px; padding: 25px;"> <div class="bwtitle">{{ title }}</div> <span style="color: yellow;">{{ internalheader }}</span> <br/> <div style="color:magenta; display:inline;">{{ getDivider() }}</div> <br/> <input v-model="num" type="text" style="background-color: darkblue; color:yellow; font-weight: bold;" v-focus></input> </p> </div> </div>',
+	
+	data: function() { return {
+		num: "",
+		}
+	},
+	
+	created: function() { window.addEventListener('keydown', this.keyHandler); store.commit('enableEnter');  },
+	beforeDestroy: function() { window.removeEventListener('keydown', this.keyHandler); },
+	
+	methods: {
+		keyHandler: function(e) {
+			if (e.keyCode == 27) { vm1.closeAnyModalWindow(); }
+			if (e.keyCode == 13) { vm1.dataInput(this.num); }
+		},
+		getDivider: function() {
+			var sym = "─", divider="";
+			var inthead = this.internalheader;
+			
+			if (!this.divline) { return null; }
+			
+			if (!inthead) { return ""; }
+			for (var i=0; i <= inthead.length; i++) {	divider += sym; }
+	
+			return divider;
+		}
+	}//end methods
+});
+
+
+
+var store = new Vuex.Store({
+	
+	state: {
+		isModalOpen: false, //Is any modal window open?
+		isEnterEnabled: false, //Is [Enter] key enable for "hot keys" line?
+		currentModal: null, //What modal window is open now?
+		currentFile: '',
+	},
+	
+	mutations: {
+		modalOpen(state, pointer) { state.isModalOpen = true; state.currentModal = pointer; },
+		modalClose(state, pointer) { state.isModalOpen = false; state.currentModal = null; },
+		
+		enableEnter(state, pointer) { state.isEnterEnabled = true; state.currentModal = pointer; },
+		disableEnter(state, pointer) { state.isEnterEnabled = false; state.currentModal = pointer; },
+	}
+});
+
+
+/* Random array of MS-DOS-16-like colors */
+var colors = ["black", "white",
+"red", "green", "blue",
+"cyan", "magenta", "yellow",
+"lightblue", "lightgreen", "lightred",
+"brown", "gray", "darkgray", "lightgray",
+"darkred", "darkgreen", "darkblue",
+"darkcyan", "darkred", "darkmagenta", "darkyellow"];
+
+function getRandomColor() {
+	return colors[Math.floor(Math.random()*colors.length)];
+}
+
+
+var vm1 = new Vue({
+	el: '#app',
+	store,
+	data: {
+			
+		toggleHelpWindow: false,
+		toggleInputWindow: false,
+		toggleOutputWindow: false,
+		toggleMSDOSWindow: false,
+		
+		desktopColorDEG: 0,
+		menuColorDEG: 0,
+		
+		sourceData: 0,
+		calculatedResult: 0,
+	},
+	
+	methods: {
+	helpWindow: function(event) { this.toggleHelpWindow = true; store.commit('modalOpen'); }, //Handler of Alt+1 keys click)
+	
+	inputWindow: function(event) { this.toggleInputWindow = true; store.commit('modalOpen'); }, //Handler of Alt+2 keys click
+	
+	rotateDesktopColor: function(event) {
+		this.desktopColorDEG += 20;
+		document.documentElement.style.setProperty(`--deskdeg`, this.desktopColorDEG + "deg"); //Change CSS-filter
+		},
+	
+	rotateMenuColor: function(event) {
+		document.documentElement.style.setProperty(`--menubk`, getRandomColor());
+		document.documentElement.style.setProperty(`--menufg`, getRandomColor());
+		},
+		
+	resetColors: function(event) { //Reset colors of Desktop and menubar + hot keys line to source
+		document.documentElement.style.setProperty(`--deskdeg`, "0deg");
+		document.documentElement.style.setProperty(`--menubk`, "lightgray");
+		document.documentElement.style.setProperty(`--menufg`, "black");
+	},
+	
+	startMSDOS: function(event) { this.toggleMSDOSWindow = true; store.commit('modalOpen');},
+	
+	getFactorial: function(n) {
+		return n ? n * this.getFactorial(n - 1) : 1;
+	},
+	
+	dataInput: function(data) {
+		this.closeAnyModalWindow();
+		
+		this.sourceData = "The factorial of a number " + data + " is..." ; //For "internalheader" prop of input window
+		this.calculatedResult = this.getFactorial(data);
+		
+		this.toggleOutputWindow = true; store.commit('modalOpen');
+	},
+	
+	/* This function close any open modal window */
+	closeAnyModalWindow: function() {
+		this.$store.commit('modalClose');
+		this.$store.commit('disableEnter'); //Disable Enter key
+		/* Passing to any modal window... */
+		this.toggleHelpWindow = false;
+		this.toggleInputWindow = false;
+		this.toggleOutputWindow = false;
+		this.toggleMSDOSWindow = false; //We see reactivity of Vue!
+	},
+	}
+});
+
+
+
+</script>
+
+</body>
+</html>

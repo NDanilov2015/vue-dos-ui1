@@ -1,0 +1,148 @@
+@charset utf-8;
+
+/* CSS variables - in 2017 year, hurra! */
+:root{
+	--bkcolor: darkblue;
+	--fgcolor: cyan;
+
+	--deskdeg: 0deg;
+	
+	--menubk: lightgray;
+	--menufg: black;
+	
+	--infobk: darkblue;
+	--infofg: white;
+	
+	--inputbk: darkcyan;
+	--inputfg: white;
+}
+
+body {
+font-size: 1.51vw;
+font-family: Menlo, Consolas, monospace;
+
+/*background-color: var(--bkcolor); /* 128 из 255 в RGB! */
+color: var(--fgcolor);
+}
+
+#app {
+	height: 91vh;
+	min-height: 91vh;
+}
+
+#main-container {
+	height: 85vh;
+}
+
+#menubar {
+	background-color: var(--menubk);
+	color: var(--menufg);
+	text-align: center;
+}
+	
+#desktop {
+	height: 100%;	
+	background-image: url("data:image/svg+xml;utf8, \
+  <svg xmlns='http://www.w3.org/2000/svg' version='1.1' width='10px' height='10px'> \
+    <rect x='0' y='0' width='170' height='50'\
+      style='fill: blue;  fill-opacity: 0.7; '/> \
+    <text x='8' y='10' style='fill: red; text-anchor: middle' font-size='16'> \
+      ▒</text></svg>");
+	  
+	-webkit-filter: hue-rotate(var(--deskdeg)) saturate(0.4);
+	filter: hue-rotate(var(--deskdeg)) saturate(0.4);
+	/*filter: saturate(1.4); */
+}
+
+footer {
+	background-color: var(--menubk);
+	color: var(--menufg); 
+}
+
+
+.item {
+	cursor: pointer;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+ul {
+	padding-left: 1em;
+	line-height: 1.5em;
+	list-style-type: dot;
+}
+
+.cursor-frame {
+	color: #008080; /* Color of sea wave */
+}
+
+.textDanger {
+	color: white;
+	background-color: darkred;
+}
+
+.textInfo {
+	color: var(--infofg);
+	background-color: var(--infobk);
+	white-space: pre-wrap;
+}
+
+.inputtext {
+	color: var(--inputfg);
+	background-color: var(--inputbk);
+}
+
+#helpWindow, #msdos, #inputwindow, #outputwindow {
+	position: absolute;
+	top: 24.4vh;
+	left: 19.5vw;
+}
+
+.bwtitle {
+	position: absolute;
+	top: 15px;
+	left: 200px;
+	z-index: 0;
+	padding: 0 10px 0 10px;
+}
+
+.textDanger .bwtitle {
+	background-color: darkred;
+}
+
+.textInfo .bwtitle {
+	background-color: darkblue;
+	color: white;
+}
+
+/* bw = base-window */
+.inputtext .bwtitle { 
+	background-color: var(--inputbk);
+	color: var(--inputfg);
+}
+
+#fnkeysblock {
+	margin: 0 auto 0 auto;
+}
+
+#fnkb-el {
+	display: inline-block;
+	background-color: var(--menubk);
+	color: darkred;
+	margin-right: 10px;
+}
+
+.fnkb-title {
+	background-color: var(--menubk);
+	color: var(--menufg);
+	/*
+	min-width: 5.6vw; /* 72px; */
+	/*max-width: 6.7vw;  /* 86px; */
+	
+	display: inline-block;
+	float: right;
+	
+	white-space: pre;
+}
