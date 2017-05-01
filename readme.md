@@ -20,7 +20,7 @@ a) For immediately enjoying, you can simply following a link:
 [https://ndanilov2015.github.io/vue-dos-ui1](https://ndanilov2015.github.io/vue-dos-ui1/)
 
 b) Or you can download this repository as .zip-file on your local machine, unpack it and starting index.html file in browser:
-[https://github.com/NDanilov2015/vue-dos-ui1.git][https://github.com/NDanilov2015/vue-dos-ui1.git]
+[https://github.com/NDanilov2015/vue-dos-ui1.git](https://github.com/NDanilov2015/vue-dos-ui1.git/)
 
 ### Prerequisites
 
