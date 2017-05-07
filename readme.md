@@ -25,7 +25,15 @@ b) Or you can download this repository as .zip-file on your local machine, unpac
 ### Prerequisites
 
 a) This app require new versions of browsers (tested in Google Chrome, Mozilla Firefox, Opera) which support of CSS variables
+
 b) Now, this app was developed for using with devices with screen resolution from 1024x600 and higher.
+
+### Install
+> Please, clone this repo and make in the console:
+> npm run install
+> npm run build
+> ... or ...
+> npm run dev (for starting in webpack-development environment)
 
 ## Built With
 * [VueJS 2.0](http://www.vuejs.org/) - The javascript nice framework
