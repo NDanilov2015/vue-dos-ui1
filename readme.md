@@ -1,4 +1,4 @@
-# vue-dos-ui1
+# vue-dos-ui1 beta
 Example of nice VueJS UI experiment to create MS-DOS-like Single Page WebApp
 
 # Description
@@ -29,3 +29,6 @@ b) Now, this app was developed for using with devices with screen resolution fro
 
 ## Built With
 * [VueJS 2.0](http://www.vuejs.org/) - The javascript nice framework
+
+## Change log
+From 30.04.2017 - Full rewriting to ES2015 modular structure, for using .vue components.
