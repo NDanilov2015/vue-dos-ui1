@@ -34,6 +34,8 @@ b) Now, this app was developed for using with devices with screen resolution fro
 > npm run build
 > ... or ...
 > npm run dev (for starting in webpack-development environment)
+> ... or ...
+> Without any building, simply see the /dist folder and start index.html from root
 
 ## Built With
 * [VueJS 2.0](http://www.vuejs.org/) - The javascript nice framework
