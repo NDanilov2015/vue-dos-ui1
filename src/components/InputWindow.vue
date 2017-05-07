@@ -63,8 +63,10 @@ methods: {
 	}//end methods
 } //end export section
 </script>
+
 <style lang="css">
-* bw = base-window */
+/* bw = base-window */
+
 .inputtext .bwtitle {
 background-color: var(--inputbk);
 color: var(--inputfg);
